@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MERCH NATION - E-commerce Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .cart-icon, .user-icon, .security-icon {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cart-icon:hover, .user-icon:hover, .security-icon:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.1);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .cta-button:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .ticket-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .security-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .security-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .security-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .security-icon-large {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .security-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .security-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .cart-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .cart-sidebar.open {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e1e5e9;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .cart-total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin: 2rem 0;
+            color: #667eea;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 1000;
+        }
+
+        .overlay.open {
+            display: block;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-secure {
+            background: #2ecc71;
+            animation: pulse 2s infinite;
+        }
+
+        .status-processing {
+            background: #f39c12;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo"> MERCH NATION</div>
+            <ul class="nav-links">
+                <li><a href="#" onclick="showSection('home')" class="active">Home</a></li>
+                <li><a href="#" onclick="showSection('merchandise')">Merchandise</a></li>
+                <li><a href="#" onclick="showSection('tickets')">Tickets</a></li>
+                <li><a href="#" onclick="showSection('security')">Security</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="security-icon" title="Security Status">
+                    <span class="status-indicator status-secure"></span>🔒
+                </button>
+                <button class="cart-icon" onclick="toggleCart()">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="user-icon">👤</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Home Section -->
+            <section id="home" class="section active">
+                <div class="hero-section">
+                    <h1>Secure E-Commerce Platform</h1>
+                    <p>Buy merchandise, book tickets, and shop with confidence using our advanced security features</p>
+                    <div class="cta-buttons">
+                        <a href="#" onclick="showSection('merchandise')" class="cta-button">Shop Merchandise</a>
+                        <a href="#" onclick="showSection('tickets')" class="cta-button">Book Tickets</a>
+                        <a href="#" onclick="showSection('security')" class="cta-button">Security Features</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Merchandise Section -->
+            <section id="merchandise" class="section">
+                <h2 class="section-title">🛍️ Merchandise Store</h2>
+                <div class="products-grid">
+                    <div class="product-card">
+                    
+                        <img src="https://ph-test-11.slatic.net/p/385a31e89a658f36ab2b7b3aed117a17.jpg" alt="T-Shirt" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Premium T-Shirt</div>
+                        <div class="product-price">₹999</div>
+                        <button class="add-to-cart" onclick="addToCart('Premium T-Shirt', 999)">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://www.prodirectsport.com/-/media/prodirect/project/en/soccer/tabs---new/editorial/boots/umbro-football-boots.jpg" alt="Sneakers" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Football boots</div>
+                        <div class="product-price">₹2499</div>
+                        <button class="add-to-cart" onclick="addToCart('Sports Sneakers', 2499)">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTn303ZsymRLRuyflwLKq8bUp5FobZxBDDiDA&s" alt="Cap" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Cap</div>
+                        <div class="product-price">₹1799</div>
+                        <button class="add-to-cart" onclick="addToCart('Cap', 1799)">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="" alt="Laptop Backpack" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Laptop Backpack</div>
+                        <div class="product-price">₹1299</div>
+                        <button class="add-to-cart" onclick="addToCart('Laptop Backpack', 1299)">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x200.png?text=Smart+Watch" alt="Smart Watch" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Smart Watch</div>
+                        <div class="product-price">₹3999</div>
+                        <button class="add-to-cart" onclick="addToCart('Smart Watch', 3999)">Add to Cart</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x200.png?text=Phone+Case" alt="Phone Case" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Phone Case</div>
+                        <div class="product-price">₹599</div>
+                        <button class="add-to-cart" onclick="addToCart('Phone Case', 599)">Add to Cart</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Tickets Section -->
+            <section id="tickets" class="section">
+                <h2 class="section-title">🎫 Event Tickets</h2>
+                <div class="products-grid">
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x200.png?text=Concert" alt="Music Concert" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Music Concert</div>
+                        <div class="product-price">₹1500</div>
+                        <button class="add-to-cart" onclick="addToCart('Music Concert Ticket', 1500)">Book Now</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x200.png?text=Cricket" alt="Cricket Match" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Cricket Match</div>
+                        <div class="product-price">₹800</div>
+                        <button class="add-to-cart" onclick="addToCart('Cricket Match Ticket', 800)">Book Now</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x200.png?text=Theater" alt="Theater Show" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Theater Show</div>
+                        <div class="product-price">₹1200</div>
+                        <button class="add-to-cart" onclick="addToCart('Theater Show Ticket', 1200)">Book Now</button>
+                    </div>
+                    <div class="product-card">
+                        <img src="https://via.placeholder.com/200x200.png?text=Tech+Conference" alt="Tech Conference" style="width:100%; height:200px; object-fit:cover; border-radius:10px; margin-bottom:1rem;">
+                        <div class="product-title">Tech Conference</div>
+                        <div class="product-price">₹2500</div>
+                        <button class="add-to-cart" onclick="addToCart('Tech Conference Ticket', 2500)">Book Now</button>
+                    </div>
+                </div>
+                
+                <div class="ticket-form">
+                    <h3 style="text-align: center; margin: 2rem 0;">Custom Ticket Booking</h3>
+                    <form onsubmit="submitTicketForm(event)">
+                        <div class="form-group">
+                            <label for="eventName">Event Name</label>
+                            <input type="text" id="eventName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventDate">Event Date</label>
+                            <input type="date" id="eventDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="ticketType">Ticket Type</label>
+                            <select id="ticketType" required>
+                                <option value="">Select Ticket Type</option>
+                                <option value="vip">VIP - ₹5000</option>
+                                <option value="premium">Premium - ₹2500</option>
+                                <option value="standard">Standard - ₹1000</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <input type="number" id="quantity" min="1" max="10" required>
+                        </div>
+                        <button type="submit" class="add-to-cart">Book Tickets</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Security Section -->
+            <section id="security" class="section">
+                <h2 class="section-title">🔒 Security Features</h2>
+                <div class="security-features">
+                    <div class="security-card">
+                        <div class="security-icon-large">🔐</div>
+                        <div class="security-title">End-to-End Encryption</div>
+                        <div class="security-description">All transactions and data are protected with military-grade AES-256 encryption</div>
+                    </div>
+                    <div class="security-card">
+                        <div class="security-icon-large">🛡️</div>
+                        <div class="security-title">Fraud Detection</div>
+                        <div class="security-description">AI-powered system monitors transactions for suspicious activities in real-time</div>
+                    </div>
+                    <div class="security-card">
+                        <div class="security-icon-large">🔑</div>
+                        <div class="security-title">Multi-Factor Authentication</div>
+                        <div class="security-description">Additional security layer with SMS, email, and authenticator app verification</div>
+                    </div>
+                    <div class="security-card">
+                        <div class="security-icon-large">💳</div>
+                        <div class="security-title">Secure Payment Gateway</div>
+                        <div class="security-description">PCI DSS compliant payment processing with multiple payment options</div>
+                    </div>
+                    <div class="security-card">
+                        <div class="security-icon-large">🕵️</div>
+                        <div class="security-title">Identity Verification</div>
+                        <div class="security-description">Advanced KYC process to verify user identity and prevent account fraud</div>
+                    </div>
+                    <div class="security-card">
+                        <div class="security-icon-large">📊</div>
+                        <div class="security-title">Security Analytics</div>
+                        <div class="security-description">Real-time monitoring dashboard for security events and threat analysis</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 3rem; text-align: center;">
+                    <h3>Security Status Dashboard</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+                        <div style="background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; color: #2ecc71;">✅</div>
+                            <div>SSL Certificate</div>
+                            <div style="color: #2ecc71; font-weight: 600;">Active</div>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; color: #2ecc71;">🔒</div>
+                            <div>Firewall Status</div>
+                            <div style="color: #2ecc71; font-weight: 600;">Protected</div>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                            <div style="font-size: 2rem; color: #f39c12;">⚠️</div>
+                            <div>Threat Level</div>
+                            <div style="color: #f39c12; font-weight: 600;">Low</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <button class="close-cart" onclick="closeCart()">✕</button>
+        </div>
+        <div id="cartItems">
+            <p style="text-align: center; color: #666; margin-top: 2rem;">Your cart is empty</p>
+        </div>
+        <div class="cart-total" id="cartTotal">Total: ₹0</div>
+        <button class="checkout-btn" onclick="checkout()">Secure Checkout 🔒</button>
+    </div>
+
+    <script>
+        let cart = [];
+        let cartTotal = 0;
+
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function addToCart(itemName, price) {
+            cart.push({ name: itemName, price: price });
+            cartTotal += price;
+            updateCartUI();
+            
+            // Show success animation
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = 'Added! ✓';
+            button.style.background = '#2ecc71';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+            }, 1000);
+        }
+
+        function updateCartUI() {
+            document.getElementById('cartBadge').textContent = cart.length;
+            document.getElementById('cartTotal').textContent = `Total: ₹${cartTotal}`;
+            
+            const cartItemsContainer = document.getElementById('cartItems');
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="text-align: center; color: #666; margin-top: 2rem;">Your cart is empty</p>';
+            } else {
+                cartItemsContainer.innerHTML = cart.map((item, index) => `
+                    <div class="cart-item">
+                        <div>
+                            <div style="font-weight: 600;">${item.name}</div>
+                            <div style="color: #667eea;">₹${item.price}</div>
+                        </div>
+                        <button onclick="removeFromCart(${index})" style="background: #ff4757; color: white; border: none; padding: 0.5rem; border-radius: 5px; cursor: pointer;">Remove</button>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function removeFromCart(index) {
+            cartTotal -= cart[index].price;
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            const cartSidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('overlay');
+            
+            cartSidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function closeCart() {
+            document.getElementById('cartSidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('open');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Simulate secure payment process
+            const checkoutBtn = document.querySelector('.checkout-btn');
+            checkoutBtn.innerHTML = 'Processing... 🔐';
+            checkoutBtn.disabled = true;
+            
+            setTimeout(() => {
+                alert(`🔒 Secure payment successful!\n\nItems purchased: ${cart.length}\nTotal amount: ₹${cartTotal}\n\nThank you for shopping with SecureShop!`);
+                cart = [];
+                cartTotal = 0;
+                updateCartUI();
+                closeCart();
+                checkoutBtn.innerHTML = 'Secure Checkout 🔒';
+                checkoutBtn.disabled = false;
+            }, 2000);
+        }
+
+        function submitTicketForm(event) {
+            event.preventDefault();
+            
+            const eventName = document.getElementById('eventName').value;
+            const eventDate = document.getElementById('eventDate').value;
+            const ticketType = document.getElementById('ticketType').value;
+            const quantity = parseInt(document.getElementById('quantity').value);
+            
+            let ticketPrice = 0;
+            switch(ticketType) {
+                case 'vip': ticketPrice = 5000; break;
+                case 'premium': ticketPrice = 2500; break;
+                case 'standard': ticketPrice = 1000; break;
+            }
+            
+            const totalPrice = ticketPrice * quantity;
+            
+            // Add to cart
+            for (let i = 0; i < quantity; i++) {
+                cart.push({ 
+                    name: `${eventName} - ${ticketType.toUpperCase()} Ticket`, 
+                    price: ticketPrice 
+                });
+            }
+            cartTotal += totalPrice;
+            updateCartUI();
+            
+            // Reset form
+            event.target.reset();
+            
+            alert(`🎫 Tickets added to cart!\n\nEvent: ${eventName}\nDate: ${eventDate}\nTickets: ${quantity} x ${ticketType.toUpperCase()}\nTotal: ₹${totalPrice}`);
+        }
+
+        // Security monitoring simulation
+        function simulateSecurityMonitoring() {
+            const securityStatus = document.querySelector('.status-indicator');
+            const threats = ['Low', 'Medium', 'Low', 'Low', 'Low']; // Mostly low threats
+            let currentThreat = 0;
+            
+            setInterval(() => {
+                const threatLevel = threats[currentThreat % threats.length];
+                const threatDisplay = document.querySelector('[style*="color: #f39c12"]');
+                
+                if (threatDisplay) {
+                    threatDisplay.textContent = threatLevel;
+                    threatDisplay.style.color = threatLevel === 'Medium' ? '#e67e22' : '#f39c12';
+                }
+                
+                currentThreat++;
+            }, 5000);
+        }
+
+        // Initialize security monitoring on page load
+        window.addEventListener('load', () => {
+            simulateSecurityMonitoring();
+            
+            // Simulate real-time security updates
+            setTimeout(() => {
+                console.log('🔒 Security System: All systems operational');
+                console.log('🛡️ Firewall: Active protection enabled');
+                console.log('🔐 Encryption: AES-256 encryption active');
+            }, 1000);
+        });
+
+        // Add keyboard shortcuts for better UX
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeCart();
+            }
+            if (event.ctrlKey && event.key === 'k') {
+                event.preventDefault();
+                document.querySelector('.cart-icon').click();
+            }
+        });
+
+        // Simulate live security alerts
+        function showSecurityAlert() {
+            const alerts = [
+                '🔒 Security Alert: Login from new device detected',
+                '🛡️ Security Update: Firewall rules updated',
+                '🔐 Security Notice: SSL certificate renewed',
+                '⚠️ Security Warning: Suspicious activity blocked'
+            ];
+            
+            const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+            
+            // Create toast notification
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                z-index: 1002;
+                font-size: 0.9rem;
+                max-width: 300px;
+                border-left: 4px solid #667eea;
+                animation: slideInRight 0.3s ease;
+            `;
+            toast.textContent = randomAlert;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 4000);
+        }
+
+        // Add CSS animations for toast notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Show security alerts every 15 seconds
+        setInterval(showSecurityAlert, 15000);
+
+        // Add smooth scrolling and enhanced interactions
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+
+                    });
+                }
+            });
+        });
+    </script>
+
+    
+</body>
+</html>
